@@ -1,0 +1,3 @@
+[submodule "packages/lisa"]
+	path = packages/lisa
+	url = https://github.com/collegeman/lisa.git
