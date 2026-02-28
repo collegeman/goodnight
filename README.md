@@ -1,59 +1,75 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Lisa
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+AI-powered project management agent for Laravel applications. Lisa watches GitHub issues, generates PRDs, implements features using Claude, deploys per-task staging sites on Laravel Forge, and creates pull requests — all automatically.
 
-## About Laravel
+## Architecture
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+Lisa runs as a Laravel package on a dedicated Forge site (the "orchestrator"). When a GitHub issue is labeled `lisa`, she:
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+1. **Intake** — Parses the issue and generates a PRD
+2. **Planning** — Breaks the PRD into implementation steps
+3. **Implementing** — Uses Claude to write code on a feature branch
+4. **Deploying** — Creates a per-task staging site on the same Forge server
+5. **Testing** — Posts the staging URL to the issue for review
+6. **Iterating** — Incorporates feedback from issue comments
+7. **Creating PR** — Opens a pull request when you comment `lisa:done`
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+### Forge Multi-Site Staging
 
-## Learning Laravel
+Each task gets its own Forge site and MySQL database on the same server as the orchestrator. Domains use sslip.io for automatic DNS resolution (e.g., `lisa-42.203.0.113.25.sslip.io`). Sites are destroyed automatically when the PR is merged.
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework. You can also check out [Laravel Learn](https://laravel.com/learn), where you will be guided through building a modern Laravel application.
+## Requirements
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+- PHP 8.2+
+- Laravel 11 or 12
+- Laravel Forge account with a provisioned server
+- GitHub repository with a fine-grained personal access token
+- Anthropic API key (Claude)
 
-## Laravel Sponsors
+## Installation
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+```bash
+composer require collegeman/lisa
+php artisan lisa:setup
+```
 
-### Premium Partners
+## Configuration
 
-- **[Vehikl](https://vehikl.com)**
-- **[Tighten Co.](https://tighten.co)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Redberry](https://redberry.international/laravel-development)**
-- **[Active Logic](https://activelogic.com)**
+All configuration is via environment variables:
 
-## Contributing
+| Variable | Description |
+|---|---|
+| `LISA_ENVIRONMENT` | App environment name for Lisa (default: `lisa`) |
+| `LISA_GITHUB_TOKEN` | GitHub fine-grained personal access token |
+| `LISA_GITHUB_OWNER` | GitHub repository owner |
+| `LISA_GITHUB_REPO` | GitHub repository name |
+| `LISA_GITHUB_WEBHOOK_SECRET` | Webhook secret (auto-generated by setup) |
+| `LISA_CLAUDE_API_KEY` | Anthropic API key |
+| `LISA_FORGE_TOKEN` | Forge API token |
+| `LISA_FORGE_SERVER_ID` | Forge server ID |
+| `LISA_FORGE_SITE_ID` | Forge site ID (orchestrator) |
+| `LISA_FORGE_SERVER_IP` | Server IP address (for sslip.io domains) |
+| `LISA_MAX_TASK_SITES` | Max concurrent task sites (default: 3) |
+| `LISA_QUEUE` | Queue name (default: `lisa`) |
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+## Setup
 
-## Code of Conduct
+Run `php artisan lisa:setup` for a guided wizard that walks through:
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+1. **GitHub** — Repository and token configuration
+2. **Claude** — Anthropic API key
+3. **Forge** — API token
+4. **Server** — Provision or select a Forge server
+5. **Site** — Create the orchestrator site, install git, deploy
+6. **Webhook** — Create the GitHub webhook
+7. **Verify** — Test connectivity to all services
 
-## Security Vulnerabilities
+## Commands
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+- `php artisan lisa:setup` — Run the setup wizard
+- `php artisan lisa:status` — Show active tasks with status, branch, and staging URL
+- `php artisan lisa:retry` — Retry a failed task
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT
