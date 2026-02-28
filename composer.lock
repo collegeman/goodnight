@@ -141,7 +141,7 @@
             "dist": {
                 "type": "path",
                 "url": "packages/lisa",
-                "reference": "0a448d1bbdae3b37fda92e59ed1d6fa0236061ba"
+                "reference": "817c30479a3ed28a05cc266fcadf92838e9c9b3c"
             },
             "require": {
                 "illuminate/contracts": "^11.0|^12.0",
@@ -150,6 +150,7 @@
                 "illuminate/http": "^11.0|^12.0",
                 "illuminate/queue": "^11.0|^12.0",
                 "illuminate/support": "^11.0|^12.0",
+                "laravel/forge-sdk": "^3.0",
                 "php": "^8.2",
                 "spatie/laravel-github-webhooks": "^1.0"
             },
@@ -1100,6 +1101,80 @@
                 }
             ],
             "time": "2025-08-22T14:27:06+00:00"
+        },
+        {
+            "name": "laravel/forge-sdk",
+            "version": "v3.24.0",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/laravel/forge-sdk.git",
+                "reference": "9be66a7856ec37a4cc7e3d70ea896e5ecdfd492f"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/laravel/forge-sdk/zipball/9be66a7856ec37a4cc7e3d70ea896e5ecdfd492f",
+                "reference": "9be66a7856ec37a4cc7e3d70ea896e5ecdfd492f",
+                "shasum": ""
+            },
+            "require": {
+                "ext-json": "*",
+                "guzzlehttp/guzzle": "^6.3.1|^7.0",
+                "php": "^7.2|^8.0"
+            },
+            "require-dev": {
+                "illuminate/support": "^7.0|^8.0|^9.0|^10.0|^11.0|^12.0",
+                "mockery/mockery": "^1.3.1",
+                "phpstan/phpstan": "^1.10",
+                "phpunit/phpunit": "^8.4|^9.0|^10.4"
+            },
+            "type": "library",
+            "extra": {
+                "laravel": {
+                    "providers": [
+                        "Laravel\\Forge\\ForgeServiceProvider"
+                    ]
+                },
+                "branch-alias": {
+                    "dev-master": "3.x-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "Laravel\\Forge\\": "src/"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Taylor Otwell",
+                    "email": "taylor@laravel.com"
+                },
+                {
+                    "name": "Mohamed Said",
+                    "email": "mohamed@laravel.com"
+                },
+                {
+                    "name": "Dries Vints",
+                    "email": "dries@laravel.com"
+                },
+                {
+                    "name": "James Brooks",
+                    "email": "james@laravel.com"
+                }
+            ],
+            "description": "The official Laravel Forge PHP SDK.",
+            "keywords": [
+                "forge",
+                "laravel"
+            ],
+            "support": {
+                "issues": "https://github.com/laravel/forge-sdk/issues",
+                "source": "https://github.com/laravel/forge-sdk"
+            },
+            "time": "2025-11-26T12:04:09+00:00"
         },
         {
             "name": "laravel/framework",
